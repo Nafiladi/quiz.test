@@ -8,6 +8,13 @@ let lives = 3;
 let streak = 0;
 let timer;
 
+document.addEventListener("DOMContentLoaded", () => {
+    const startButton = document.getElementById("start-button");
+    if (startButton) {
+        startButton.addEventListener("click", startGame);
+    }
+});
+
 function startGame() {
     document.getElementById("home-page").classList.add("hidden");
     document.getElementById("quiz-page").classList.remove("hidden");
