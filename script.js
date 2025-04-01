@@ -6,105 +6,106 @@ const countries = [
 
 let lives = 3;
 let streak = 0;
-let timer;
-
-document.addEventListener("DOMContentLoaded", () => {
-    const startButton = document.getElementById("start-button");
-    if (!startButton) {
-        console.error("Start button with ID 'start-button' not found.");
-        return;
-    }
-    startButton.addEventListener("click", startGame);
-});
+let highestStreak = 0;
+let timeLeft = 10;
+let timerInterval;
+let correctAnswer;
 
 function startGame() {
-    try {
-        const homePage = document.getElementById("home-page");
-        const quizPage = document.getElementById("quiz-page");
-        if (!homePage || !quizPage) {
-            console.error("Required elements 'home-page' or 'quiz-page' not found.");
-            return;
-        }
-        homePage.classList.add("hidden");
-        quizPage.classList.remove("hidden");
-        lives = 3; 
-        streak = 0; 
-        document.getElementById("lives").textContent = lives;
-        document.getElementById("streak").textContent = streak;
-        nextQuestion();
-    } catch (error) {
-        console.error("Error in startGame():", error);
+    if (lives <= 0) {
+        document.getElementById("result").textContent = "Game Over! Refresh to play again.";
+        document.getElementById("play-again").style.display = "block";
+        return;
     }
+
+    const randomCountry = countries[Math.floor(Math.random() * countries.length)];
+    correctAnswer = randomCountry.capital;
+
+    document.getElementById("country").textContent = `Country: ${randomCountry.name}`;
+    document.getElementById("result").textContent = "";
+    document.getElementById("play-again").style.display = "none";
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    const options = [correctAnswer];
+    while (options.length < 4) {
+        const randomOption = countries[Math.floor(Math.random() * countries.length)].capital;
+        if (!options.includes(randomOption)) {
+            options.push(randomOption);
+        }
+    }
+
+    options.sort(() => Math.random() - 0.5);
+
+    options.forEach(option => {
+        const optionDiv = document.createElement("div");
+        optionDiv.classList.add("option");
+        optionDiv.textContent = option;
+        optionDiv.addEventListener("click", () => checkAnswer(option));
+        optionsDiv.appendChild(optionDiv);
+    });
+
+    startTimer();
 }
 
-function nextQuestion() {
-    try {
-        if (lives <= 0) {
-            endGame();
-            return;
+function startTimer() {
+    timeLeft = 10;
+    updateTimerDisplay();
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            checkAnswer(null);
         }
-        clearTimeout(timer);
-        let timeLeft = 15;
-        document.getElementById("timer").textContent = timeLeft;
-
-        const country = countries[Math.floor(Math.random() * countries.length)];
-        document.getElementById("question").textContent = `Which country has the capital ${country.capital}?`;
-        let choices = [...countries.map(c => c.name)];
-        choices = choices.sort(() => 0.5 - Math.random()).slice(0, 4);
-        if (!choices.includes(country.name)) choices[Math.floor(Math.random() * 4)] = country.name;
-        
-        const choicesList = document.getElementById("choices");
-        if (!choicesList) {
-            console.error("Element with ID 'choices' not found.");
-            return;
-        }
-        choicesList.innerHTML = "";
-        choices.forEach(choice => {
-            let li = document.createElement("li");
-            li.textContent = choice;
-            li.onclick = () => checkAnswer(choice, country.name);
-            choicesList.appendChild(li);
-        });
-
-        timer = setInterval(() => {
-            timeLeft--;
-            document.getElementById("timer").textContent = timeLeft;
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                loseLife();
-            }
-        }, 1000);
-    } catch (error) {
-        console.error("Error in nextQuestion():", error);
-    }
+    }, 1000);
 }
 
-function checkAnswer(choice, correct) {
-    clearInterval(timer);
-    if (choice === correct) {
+function updateTimerDisplay() {
+    document.getElementById("timer").textContent = `Time: ${timeLeft}`;
+}
+
+function checkAnswer(selectedOption) {
+    clearInterval(timerInterval);
+    const resultDiv = document.getElementById("result");
+    const streakDiv = document.getElementById("streak");
+    const highestStreakDiv = document.getElementById("highest-streak");
+    const livesDiv = document.getElementById("lives");
+
+    if (selectedOption === correctAnswer) {
+        resultDiv.textContent = "Correct!";
         streak++;
-        document.getElementById("streak").textContent = streak;
+        if (streak > highestStreak) {
+            highestStreak = streak;
+        }
+        startGame();
     } else {
-        loseLife();
+        resultDiv.textContent = `Incorrect! The correct answer was: ${correctAnswer}`;
+        streak = 0;
+        lives--;
     }
-    nextQuestion();
+
+    streakDiv.textContent = `Streak: ${streak}`;
+    highestStreakDiv.textContent = `Highest Streak: ${highestStreak}`;
+    livesDiv.textContent = `Lives: ${lives}`;
+
+    if (lives <= 0) {
+        document.getElementById("result").textContent = "Game Over! Refresh to play again.";
+        document.getElementById("play-again").style.display = "block";
+    }
 }
 
-function loseLife() {
-    lives--;
-    document.getElementById("lives").textContent = lives;
-    if (lives <= 0) endGame();
-    else nextQuestion();
-}
+document.getElementById("play-again").addEventListener("click", () => {
+    lives = 3;
+    streak = 0;
+    document.getElementById("lives").textContent = `Lives: ${lives}`;
+    document.getElementById("streak").textContent = `Streak: ${streak}`;
+    startGame();
+});
 
-function endGame() {
-    clearInterval(timer);
-    document.getElementById("quiz-page").classList.add("hidden");
-    document.getElementById("game-over-page").classList.remove("hidden");
-    document.getElementById("final-score").textContent = streak;
-}
-
-function restartGame() {
-    document.getElementById("game-over-page").classList.add("hidden");
-    startGame(); 
-}
+document.getElementById("lives").textContent = `Lives: ${lives}`;
+document.getElementById("streak").textContent = `Streak: ${streak}`;
+document.getElementById("highest-streak").textContent = `Highest Streak: ${highestStreak}`;
+startGame();

@@ -3,30 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-
-    <title>Country Quiz Game</title>
+    <title>Country Capital Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .option {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+        .option:hover {
+            background-color: #ddd;
+        }
+        #play-again {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #play-again:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <div id="home-page" class="page">
-        <h1>🌍 Welcome to Country Quiz 🌎</h1>
-        <p>Test your knowledge and keep your streak alive!</p>
-        <button onclick="startGame()">Start Quiz</button>
-    </div>
-    <div id="quiz-page" class="page hidden">
-        <h2 id="question">What country is this?</h2>
-        <ul id="choices"></ul>
-        <p>⏳ Time Left: <span id="timer">15</span> sec</p>
-        <p>❤ Lives: <span id="lives">3</span></p>
-        <p>🔥 Streak: <span id="streak">0</span></p>
-    </div>
-
-    <div id="game-over-page" class="page hidden">
-        <h1>Game Over! 😢</h1>
-        <p>Your final streak: <span id="final-score">0</span></p>
-        <a href="https://sites.google.com/view/who-is-lick-ball-master/leaderboard" target="_blank">🏆 View Leaderboard</a>
-        <button onclick="restartGame()">🔄 Play Again</button>
-    </div>
+    <h1>Country Capital Game</h1>
+    <p id="country"></p>
+    <div id="options"></div>
+    <p id="timer"></p>
+    <p id="result"></p>
+    <p id="lives"></p>
+    <p id="streak"></p>
+    <p id="highest-streak"></p>
+    <button id="play-again">Play Again</button>
     <script src="script.js"></script>
 </body>
 </html>
