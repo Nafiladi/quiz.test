@@ -3,60 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
     <title>Country Quiz Game</title>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-            background: linear-gradient(to right, #36D1DC, #5B86E5);
-            color: white;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        .page {
-            display: none;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        .hidden { display: none; }
-        #home-page { display: block; }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            margin: 10px;
-            padding: 15px;
-            background: #FFD700;
-            color: black;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 18px;
-        }
-        li:hover {
-            background: #FFA500;
-        }
-        button {
-            padding: 15px 30px;
-            border: none;
-            background: #FF4081;
-            color: white;
-            border-radius: 10px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover {
-            background: #E91E63;
-        }
-    </style>
 </head>
 <body>
     <div id="home-page" class="page">
@@ -78,91 +27,6 @@
         <a href="https://sites.google.com/view/who-is-lick-ball-master/leaderboard" target="_blank">🏆 View Leaderboard</a>
         <button onclick="restartGame()">🔄 Play Again</button>
     </div>
-
-    <script>
-        const countries = [
-            { name: "France", capital: "Paris", population: "67 million" },
-            { name: "Japan", capital: "Tokyo", population: "126 million" },
-            { name: "Brazil", capital: "Brasilia", population: "212 million" }
-        ];
-
-        let lives = 3;
-        let streak = 0;
-        let timer;
-
-        function startGame() {
-            document.getElementById("home-page").classList.add("hidden");
-            document.getElementById("quiz-page").classList.remove("hidden");
-            lives = 3; // Reset lives at the start of the game
-            streak = 0; // Reset streak at the start of the game
-            document.getElementById("lives").textContent = lives;
-            document.getElementById("streak").textContent = streak;
-            nextQuestion();
-        }
-
-        function nextQuestion() {
-            if (lives <= 0) {
-                endGame();
-                return;
-            }
-            clearTimeout(timer);
-            let timeLeft = 15;
-            document.getElementById("timer").textContent = timeLeft;
-
-            const country = countries[Math.floor(Math.random() * countries.length)];
-            document.getElementById("question").textContent = `Which country has the capital ${country.capital}?`;
-            let choices = [...countries.map(c => c.name)];
-            choices = choices.sort(() => 0.5 - Math.random()).slice(0, 4);
-            if (!choices.includes(country.name)) choices[Math.floor(Math.random() * 4)] = country.name;
-            
-            const choicesList = document.getElementById("choices");
-            choicesList.innerHTML = "";
-            choices.forEach(choice => {
-                let li = document.createElement("li");
-                li.textContent = choice;
-                li.onclick = () => checkAnswer(choice, country.name);
-                choicesList.appendChild(li);
-            });
-
-            timer = setInterval(() => {
-                timeLeft--;
-                document.getElementById("timer").textContent = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    loseLife();
-                }
-            }, 1000);
-        }
-
-        function checkAnswer(choice, correct) {
-            clearInterval(timer);
-            if (choice === correct) {
-                streak++;
-                document.getElementById("streak").textContent = streak;
-            } else {
-                loseLife();
-            }
-            nextQuestion();
-        }
-
-        function loseLife() {
-            lives--;
-            document.getElementById("lives").textContent = lives;
-            if (lives <= 0) endGame();
-            else nextQuestion();
-        }
-
-        function endGame() {
-            clearInterval(timer);
-            document.getElementById("quiz-page").classList.add("hidden");
-            document.getElementById("game-over-page").classList.remove("hidden");
-            document.getElementById("final-score").textContent = streak;
-        }
-
-        function restartGame() {
-            document.getElementById("game-over-page").classList.add("hidden");
-            startGame(); // Reuse startGame to reset lives and streak
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
