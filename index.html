@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -92,6 +93,10 @@
         function startGame() {
             document.getElementById("home-page").classList.add("hidden");
             document.getElementById("quiz-page").classList.remove("hidden");
+            lives = 3; // Reset lives at the start of the game
+            streak = 0; // Reset streak at the start of the game
+            document.getElementById("lives").textContent = lives;
+            document.getElementById("streak").textContent = streak;
             nextQuestion();
         }
 
@@ -101,7 +106,9 @@
                 return;
             }
             clearTimeout(timer);
-            document.getElementById("timer").textContent = 15;
+            let timeLeft = 15;
+            document.getElementById("timer").textContent = timeLeft;
+
             const country = countries[Math.floor(Math.random() * countries.length)];
             document.getElementById("question").textContent = `Which country has the capital ${country.capital}?`;
             let choices = [...countries.map(c => c.name)];
@@ -116,11 +123,19 @@
                 li.onclick = () => checkAnswer(choice, country.name);
                 choicesList.appendChild(li);
             });
-            timer = setTimeout(() => { loseLife(); }, 15000);
+
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById("timer").textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    loseLife();
+                }
+            }, 1000);
         }
 
         function checkAnswer(choice, correct) {
-            clearTimeout(timer);
+            clearInterval(timer);
             if (choice === correct) {
                 streak++;
                 document.getElementById("streak").textContent = streak;
@@ -134,22 +149,19 @@
             lives--;
             document.getElementById("lives").textContent = lives;
             if (lives <= 0) endGame();
+            else nextQuestion();
         }
 
         function endGame() {
+            clearInterval(timer);
             document.getElementById("quiz-page").classList.add("hidden");
             document.getElementById("game-over-page").classList.remove("hidden");
             document.getElementById("final-score").textContent = streak;
         }
 
         function restartGame() {
-            lives = 3;
-            streak = 0;
-            document.getElementById("lives").textContent = lives;
-            document.getElementById("streak").textContent = streak;
             document.getElementById("game-over-page").classList.add("hidden");
-            document.getElementById("quiz-page").classList.remove("hidden");
-            nextQuestion();
+            startGame(); // Reuse startGame to reset lives and streak
         }
     </script>
 </body>
